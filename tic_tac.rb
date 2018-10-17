@@ -97,7 +97,7 @@ end
 #OBJECTS - - - - - - - - - - - - -
 class Game
   include Play
-  attr_accessor :board, :player_one, :player_two, :player_toggle, :won, :draw
+  attr_accessor :board, :player_toggle, :won, :draw
   def initialize
     @draw = false
     @won = false

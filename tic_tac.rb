@@ -2,6 +2,7 @@
 #BEHAVIOR
 module Play
   def check_if_won
+    whole_board = board.flatten
     row_one = board[0]
     row_two = board[1]
     row_three = board[2]
@@ -10,25 +11,20 @@ module Play
     column_three = [ board[0][2],board[1][2],board[2][2] ]
     diagonal_one = [ board[0][0],board[1][1], board[2][2] ]
     diagonal_two = [ board[0][2],board[1][1], board[2][0] ]
+    winners = [row_one, row_two, row_three, column_one, column_two, column_three,diagonal_one, diagonal_two]
 
-    winners = [
-      row_one,
-      row_two,
-      row_three,
-      column_one,
-      column_two,
-      column_three,
-      diagonal_one,
-      diagonal_two
-    ]
-    winners.each do |items|
-     if items.eql? ['x','x','x'] 
+    winners.each do |item|
+      if item.eql? ['x','x','x'] 
        self.won = true
-     end
+      end
+      if item.eql? ['o','o','o'] 
+       self.won = true
+      end 
+    end
 
-     if items.eql? ['o','o','o'] 
+    if !whole_board.any? {|box| box.is_a? Integer}
        self.won = true
-     end 
+       self.draw = true
     end
   end 
 
@@ -96,15 +92,14 @@ module Play
       end #case player two
     end
   end#end of mark_square
-
 end
 
-#OBJECTS
+#OBJECTS - - - - - - - - - - - - -
 class Game
   include Play
-  
-  attr_accessor :board, :player_one, :player_two, :player_toggle, :won
+  attr_accessor :board, :player_one, :player_two, :player_toggle, :won, :draw
   def initialize
+    @draw = false
     @won = false
     @player_toggle = 'two'
     @board =[
@@ -114,9 +109,6 @@ class Game
     ]
   end
 end 
-
-
-
 #- - - - - - - - -
 #runner 
 
@@ -156,8 +148,11 @@ if start_game == 'y'
     tester_game.check_if_won 
     break if tester_game.won == true
   end  
-  puts "Looks like PLAYER #{tester_game.player_toggle} Won!"
-
+  if tester_game.draw == true
+    puts "Looks like its a DRAW!"
+  else  
+    puts "Looks like PLAYER #{tester_game.player_toggle} Won!"
+  end
 else
  puts 'okay, we\'ll play later!' 
 end 

@@ -1,6 +1,36 @@
 
 #BEHAVIOR
 module Play
+  def check_if_won
+    row_one = board[0]
+    row_two = board[1]
+    row_three = board[2]
+    column_one   = [ board[0][0],board[1][0],board[2][0] ]
+    column_two   = [ board[0][1],board[1][1],board[2][1] ]
+    column_three = [ board[0][2],board[1][2],board[2][2] ]
+    diagonal_one = [ board[0][0],board[1][1], board[2][2] ]
+    diagonal_two = [ board[0][2],board[1][1], board[2][0] ]
+
+    winners = [
+      row_one,
+      row_two,
+      row_three,
+      column_one,
+      column_two,
+      column_three,
+      diagonal_one,
+      diagonal_two
+    ]
+    winners.each do |items|
+     if items.eql? ['x','x','x'] 
+       self.won = true
+     end
+
+     if items.eql? ['o','o','o'] 
+       self.won = true
+     end 
+    end
+  end 
 
   def change_player
     if self.player_toggle == 'one'
@@ -22,7 +52,7 @@ module Play
   end  
 
   def mark_square(move)
-    if player_toggle == 'one'
+    if player_toggle == 'two'
       case move
         when '1'
           board[0][0] = 'x'    
@@ -43,8 +73,7 @@ module Play
         when '9'
           board[2][2] = 'x'  
       end #case PLAYER one
-      
-   elsif player_toggle == 'two'
+   elsif player_toggle == 'one'
     case move
       when '1'
        board[0][0] = 'o'
@@ -73,26 +102,17 @@ end
 #OBJECTS
 class Game
   include Play
-   
-  attr_accessor :board, :player_one, :player_two, :player_toggle
+  
+  attr_accessor :board, :player_one, :player_two, :player_toggle, :won
   def initialize
-    @player_toggle = 'one'
+    @won = false
+    @player_toggle = 'two'
     @board =[
      [1,2,3],
      [4,5,6],
      [7,8,9],
     ]
   end
-  # def display_new_board
-  #   p ' - - + - - + - - '
-  #   p "| #{board[0][0]}  |  #{board[0][1]}  |  #{board[0][2]} |"
-  #   p ' - - + - - + - - '
-  #   p "| #{board[1][0]}  |  #{board[1][1]}  |  #{board[1][2]} |"
-  #   p ' - - + - - + - - '
-  #   p "| #{board[2][0]}  |  #{board[2][1]}  |  #{board[2][2]} |"
-  #   p ' - - + - - + - - '
-  #   puts ''
-  # end  
 end 
 
 
@@ -114,20 +134,29 @@ if start_game == 'y'
  puts ''
  puts ' - - - - - - - - - - - - -'
 
- puts 'Make your move: PLAYER ONE' 
- puts 'chose a square number: (1-9)'
-  move = gets.chomp
-  tester_game.mark_square(move)
-  tester_game.display_new_board
-  tester_game.change_player
-  tester_game.player_toggle
+   while (tester_game.won != true)
+    puts 'Make your move: PLAYER ONE' 
+    puts 'chose a square number: (1-9)'
+    move = gets.chomp
+    tester_game.mark_square(move)
+    tester_game.display_new_board
+    tester_game.change_player
+    tester_game.check_if_won
+    break if tester_game.won == true
 
-puts 'Make your move: PLAYER TWO' 
-puts 'chose a square number: (1-9)' 
-  move = gets.chomp
-  tester_game.mark_square(move)
-  tester_game.display_new_board
-  tester_game.change_player  
+    puts ''
+    puts ''
+    puts ' - - - - - - - - - - - - -'
+    puts 'Make your move: PLAYER TWO' 
+    puts 'chose a square number: (1-9)' 
+    move = gets.chomp
+    tester_game.mark_square(move)
+    tester_game.display_new_board
+    tester_game.change_player 
+    tester_game.check_if_won 
+    break if tester_game.won == true
+  end  
+  puts "Looks like PLAYER #{tester_game.player_toggle} Won!"
 
 else
  puts 'okay, we\'ll play later!' 
